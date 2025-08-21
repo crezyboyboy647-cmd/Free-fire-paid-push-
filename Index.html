@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Free Fire Pide Push</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1724; --card:#0b1220; --accent:#ff6b00; --muted:#94a3b8;
+    --success:#22c55e; --danger:#ef4444; --glass:rgba(255,255,255,.04);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;background:#0b1220;color:#e6eef8}
+
+  /* Loading */
+  .loading{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:linear-gradient(180deg,#061226,#08182f);z-index:9999;transition:opacity .4s}
+  .loading .logo{width:120px;height:120px;border-radius:22px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.5)}
+  .loading img{width:100%;height:100%;object-fit:cover}
+  .loading .txt{font-weight:800;letter-spacing:.3px}
+
+  /* App shell */
+  .page{display:none;min-height:100vh}
+  header{position:sticky;top:0;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(2,6,23,.55);border-bottom:1px solid rgba(255,255,255,.04);backdrop-filter:blur(8px);z-index:5}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand .avatar{width:36px;height:36px;border-radius:10px;overflow:hidden;background:#fff}
+  .brand img{width:100%;height:100%;object-fit:cover}
+  .heart{font-size:22px;line-height:1}
+
+  main{padding:18px}
+  .offer{background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));border-radius:16px;padding:18px;box-shadow:0 10px 30px rgba(2,6,23,.6)}
+  .offer .title{font-weight:800;font-size:18px;display:flex;align-items:center;gap:10px}
+  .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.06);color:var(--accent);font-weight:800;font-size:12px}
+  .subtitle{color:var(--muted);font-size:14px;margin:6px 0 8px}
+  .offer ul{margin:8px 0 0 18px}
+  .offer li{margin:6px 0}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:12px;background:var(--accent);color:#071022;font-weight:800;border:none;cursor:pointer;box-shadow:0 8px 22px rgba(255,107,0,.18)}
+  .btn.ghost{background:transparent;color:#e6eef8;border:1px solid rgba(255,255,255,.08);font-weight:600}
+  .cta{margin-top:12px}
+
+  /* Services */
+  .card{background:var(--card);border-radius:14px;padding:14px}
+  .table{width:100%;border-collapse:collapse}
+  .thead{display:none}
+  .row{display:flex;align-items:center;justify-content:space-between;padding:12px;border-bottom:1px dashed rgba(255,255,255,.06)}
+  .row:last-child{border-bottom:0}
+  .left{display:flex;align-items:center;gap:12px}
+  .price{font-weight:800;color:var(--accent)}
+  .stars{color:#ffd166}
+  .actions{display:flex;gap:8px}
+  .sbtn{padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#e6eef8;font-weight:700;cursor:pointer}
+  .buy{background:var(--success);border:none;color:#06210f}
+  .desc{display:none;color:var(--muted);font-size:13px;padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.04);margin:8px 0 0}
+
+  /* Tabs */
+  .tabs{position:fixed;bottom:0;left:0;right:0;background:#0c1526;border-top:1px solid rgba(255,255,255,.06);display:flex}
+  .tabs button{flex:1;padding:12px 8px;background:transparent;border:none;color:#c9d4e5;font-weight:700;cursor:pointer}
+  .tabs button.active{color:#fff;background:rgba(255,255,255,.04)}
+
+  /* Modal */
+  .backdrop{position:fixed;inset:0;background:rgba(2,6,23,.65);display:flex;align-items:center;justify-content:center;padding:18px;z-index:30}
+  .modal{width:100%;max-width:440px;background:linear-gradient(180deg,#071226,#0a1426);border-radius:14px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+  .qr{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .qr img{width:240px;height:240px;background:#fff;border-radius:10px;object-fit:contain}
+  .note{color:var(--muted);font-size:12px}
+
+  /* Admin/Login/Histo */
+  .admin-box{max-width:520px;margin:0 auto}
+  .field{display:flex;gap:8px;margin:8px 0}
+  input[type="password"],input[type="text"],input[type="email"]{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#fff}
+  table.orders{width:100%;border-collapse:collapse;margin-top:10px}
+  table.orders th, table.orders td{padding:10px;border-bottom:1px dashed rgba(255,255,255,.06);text-align:left;font-size:14px}
+  table.orders th{color:#cfe0ff;font-weight:800}
+  .pill{display:inline-block;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.08);font-size:12px}
+  @media(min-width:720px){main{max-width:980px;margin:0 auto}}
+</style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loading" class="loading" aria-hidden="false">
+  <div class="logo"><img src="logo.png" alt="M logo (provide logo.png in folder)"></div>
+  <div class="txt">Loading…</div>
+</div>
+
+<!-- PAGE 1: Home -->
+<section id="home" class="page" aria-hidden="true">
+  <header>
+    <div class="brand">
+      <div class="avatar"><img src="logo.png" alt="Profile"></div>
+      <div>
+        <div style="font-weight:800;font-size:13px">Free Fire Pide Push</div>
+        <div style="color:var(--muted);font-size:11px">Service name — FREE FIRE PAID PUSH</div>
+      </div>
+    </div>
+    <div class="heart" aria-label="heart">❤️</div>
+  </header>
+
+  <main>
+    <section class="offer">
+      <div class="title">🎮🔥 FREE FIRE RANK PUSH OFFER 🔥🎮 <span class="badge">💰 PAID PUSH 💰</span></div>
+      <div class="subtitle">
+        Grandmaster jana ab sapna nahi! 🚀<br>
+        Jo log Grandmaster jana chahte hain lekin ja nahi pa rahe –
+      </div>
+      <ul>
+        <li>✅ Main le jaunga aapka ID safe aur fast</li>
+        <li>❌ No hack — ✅ No ban — 100% safe</li>
+        <li>✅ 100% guaranteed rank up</li>
+      </ul>
+      <div style="color:var(--muted);font-size:13px;margin-top:8px">📢 Service Available Now — Limited time offer</div>
+      <div class="cta">
+        <button class="btn" id="gotoServices">ALL SERVICE</button>
+      </div>
+    </section>
+  </main>
+</section>
+
+<!-- PAGE 2: Services -->
+<section id="services" class="page" aria-hidden="true">
+  <header>
+    <div class="brand">
+      <div class="avatar"><img src="logo.png" alt="Logo"></div>
+      <div>
+        <div style="font-weight:800;font-size:13px">All Services</div>
+        <div style="color:var(--muted);font-size:11px">Pick your package</div>
+      </div>
+    </div>
+    <div class="heart">🛒</div>
+  </header>
+
+  <main>
+    <div class="card">
+      <!-- one row per service -->
+      <div class="row">
+        <div class="left">
+          <div>
+            <div class="price">₹40</div>
+            <div class="stars">10 ⭐</div>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="sbtn buy" onclick="buy('10 Stars',40)">Buy Now</button>
+          <button class="sbtn" onclick="toggleMore(this)">More</button>
+        </div>
+      </div>
+      <div class="desc">CS rank ak star matlab ak booyah, isliye sirf booyah count hoga.</div>
+
+      <div class="row">
+        <div class="left"><div><div class="price">₹50</div><div class="stars">15 ⭐</div></div></div>
+        <div class="actions"><button class="sbtn buy" onclick="buy('15 Stars',50)">Buy Now</button><button class="sbtn" onclick="toggleMore(this)">More</button></div>
+      </div>
+      <div class="desc">CS rank ak star matlab ak booyah, isliye sirf booyah count hoga.</div>
+
+      <div class="row">
+        <div class="left"><div><div class="price">₹60</div><div class="stars">20 ⭐</div></div></div>
+        <div class="actions"><button class="sbtn buy" onclick="buy('20 Stars',60)">Buy Now</button><button class="sbtn" onclick="toggleMore(this)">More</button></div>
+      </div>
+      <div class="desc">CS rank ak star matlab ak booyah, isliye sirf booyah count hoga.</div>
+
+      <div class="row">
+        <div class="left"><div><div class="price">₹100</div><div class="stars">30 ⭐</div></div></div>
+        <div class="actions"><button class="sbtn buy" onclick="buy('30 Stars',100)">Buy Now</button><button class="sbtn" onclick="toggleMore(this)">More</button></div>
+      </div>
+      <div class="desc">CS rank ak star matlab ak booyah, isliye sirf booyah count hoga.</div>
+
+      <div class="row">
+        <div class="left"><div><div class="price">₹200</div><div class="stars">62 ⭐</div></div></div>
+        <div class="actions"><button class="sbtn buy" onclick="buy('62 Stars',200)">Buy Now</button><button class="sbtn" onclick="toggleMore(this)">More</button></div>
+      </div>
+      <div class="desc">CS rank ak star matlab ak booyah, isliye sirf booyah count hoga.</div>
+
+      <div class="row">
+        <div class="left"><div><div class="price">₹300</div><div class="stars">95 ⭐</div></div></div>
+        <div class="actions"><button class="sbtn buy" onclick="buy('95 Stars',300)">Buy Now</button><button class="sbtn" onclick="toggleMore(this)">More</button></div>
+      </div>
+      <div class="desc">CS rank ak star matlab ak booyah, isliye sirf booyah count hoga.</div>
+    </div>
+  </main>
+</section>
+
+<!-- PAGE 3: My Orders (user history) -->
+<section id="history" class="page" aria-hidden="true">
+  <header>
+    <div class="brand">
+      <div class="avatar"><img src="logo.png" alt="Logo"></div>
+      <div><div style="font-weight:800;font-size:13px">My Orders</div><div style="color:var(--muted);font-size:11px">Live history</div></div>
+    </div>
+    <div class="heart">📜</div>
+  </header>
+  <main>
+    <div class="admin-box">
+      <table class="orders" id="myOrdersTable">
+        <thead><tr><th>Service</th><th>Price</th><th>Status</th><th>Time</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="note" style="margin-top:8px">This device’s orders only (private). A random ID is stored locally.</div>
+    </div>
+  </main>
+</section>
+
+<!-- PAGE 4: Admin -->
+<section id="admin" class="page" aria-hidden="true">
+  <header>
+    <div class="brand">
+      <div class="avatar"><img src="logo.png" alt="Logo"></div>
+      <div><div style="font-weight:800;font-size:13px">Admin Panel</div><div style="color:var(--muted);font-size:11px">Live orders</div></div>
+    </div>
+    <div class="heart">🛡️</div>
+  </header>
+  <main>
+    <div class="admin-box">
+      <!-- simple admin lock -->
+      <div id="adminLock">
+        <div style="margin-bottom:6px;color:var(--muted);font-size:14px">Enter Admin Key to view orders</div>
+        <div class="field">
+          <input type="password" id="adminKey" placeholder="Admin Key">
+          <button class="btn" onclick="unlockAdmin()">Unlock</button>
+        </div>
+        <div class="note">Set your own Admin Key inside the code (search <code>ADMIN_KEY</code>).</div>
+      </div>
+
+      <div id="adminArea" style="display:none">
+        <div class="pill">Connected: <span id="connState">—</span></div>
+        <table class="orders" id="allOrdersTable">
+          <thead><tr><th>User</th><th>Service</th><th>Price</th><th>Status</th><th>Time</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</section>
+
+<!-- Bottom Tabs -->
+<nav class="tabs" aria-label="Tabs">
+  <button id="tabHome"   onclick="show('home')"   class="active">Home</button>
+  <button id="tabServ"   onclick="show('services')">Services</button>
+  <button id="tabHist"   onclick="show('history')">My Orders</button>
+  <button id="tabAdmin"  onclick="show('admin')">Admin</button>
+</nav>
+
+<!-- Modal Root -->
+<div id="modalRoot" style="display:none"></div>
+
+<!-- Firebase + App Script -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  /* ====== 1) PUT YOUR FIREBASE CONFIG HERE ====== */
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+  /* ============================================== */
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // Simple admin key (change this!)
+  const ADMIN_KEY = "850964"; // <-- নিজে বদলে নিও
+
+  /* ------------ UI helpers ----------- */
+  const pages = ["home","services","history","admin"];
+  function show(id){
+    pages.forEach(p=>document.getElementById(p).style.display = (p===id)?"block":"none");
+    document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+    document.getElementById('tab'+id.charAt(0).toUpperCase()+id.slice(1,4)).classList.add('active');
+  }
+  window.show = show;
+
+  // After loading
+  window.addEventListener('load',()=>{
+    setTimeout(()=>{
+      const l=document.getElementById('loading');
+      l.style.opacity='0'; l.setAttribute('aria-hidden','true');
+      setTimeout(()=> l.style.display='none',400);
+      document.getElementById('home').style.display='block';
+    },800);
+  });
+
+  document.getElementById('gotoServices').addEventListener('click',()=>show('services'));
+
+  // toggle more
+  window.toggleMore = (btn)=>{
+    const row = btn.closest('.row');
+    const desc = row.nextElementSibling;
+    if(desc && desc.classList.contains('desc')){
+      const open = desc.style.display==='block';
+      desc.style.display = open?'none':'block';
+      btn.textContent = open?'More':'Less';
+    }
+  };
+
+  /* ---------- user id for history ---------- */
+  const uid = (()=> {
+    let u = localStorage.getItem('ff_uid');
+    if(!u){ u = 'u_' + Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('ff_uid',u); }
+    return u;
+  })();
+
+  /* ---------- Buy flow (QR + save order) ---------- */
+  window.buy = (service, price)=>{
+    openOrderModal(service, price);
+  }
+
+  function openOrderModal(service, price){
+    const root = document.getElementById('modalRoot');
+    root.innerHTML = `
+      <div class="backdrop" onclick="if(event.target===this) closeModal()">
+        <div class="modal" role="dialog" aria-modal="true">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <h3 style="margin:0">Buy: ${service} — ₹${price}</h3>
+            <button class="sbtn" onclick="closeModal()">✕</button>
+          </div>
+          <div class="qr">
+            <img src="pr.png" alt="Paytm QR (put pr.png in the same folder)">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+              <a class="btn" href="pr.png" download="paytm-qr-${price}.png" style="text-decoration:none">Download QR</a>
+              <button class="btn ghost" onclick="confirmPaid('${service}', ${price})">I Paid</button>
+            </div>
+          </div>
+          <div class="note">Scan and pay via Paytm. After payment, tap “I Paid” to save your order.</div>
+        </div>
+      </div>`;
+    root.style.display='block';
+  }
+  window.closeModal = ()=>{ const r=document.getElementById('modalRoot'); r.innerHTML=''; r.style.display='none'; };
+
+  window.confirmPaid = async (service, price)=>{
+    try{
+      await addDoc(collection(db,'orders'),{
+        uid, service, price,
+        status:'paid',
+        createdAt: serverTimestamp()
+      });
+      alert('✅ Order saved! You can see it in My Orders.');
+      closeModal();
+    }catch(e){
+      alert('❌ Error: '+ (e?.message||e));
+    }
+  };
+
+  /* ---------- Live: My Orders ---------- */
+  const myTBody = document.querySelector('#myOrdersTable tbody');
+  const myQ = query(collection(db,'orders'), where('uid','==',uid), orderBy('createdAt','desc'));
+  onSnapshot(myQ, (snap)=>{
+    myTBody.innerHTML='';
+    snap.forEach(doc=>{
+      const d = doc.data();
+      myTBody.innerHTML += `<tr>
+        <td>${d.service}</td>
+        <td>₹${d.price}</td>
+        <td><span class="pill">${d.status||'-'}</span></td>
+        <td>${d.createdAt?.toDate ? d.createdAt.toDate().toLocaleString() : '-'}</td>
+      </tr>`;
+    });
+  });
+
+  /* ---------- Admin unlock + Live all orders ---------- */
+  window.unlockAdmin = ()=>{
+    const val = (document.getElementById('adminKey').value||'').trim();
+    if(val===ADMIN_KEY){
+      document.getElementById('adminLock').style.display='none';
+      document.getElementById('adminArea').style.display='block';
+      liveAllOrders();
+    }else{
+      alert('❌ Wrong Admin Key');
+    }
+  }
+
+  function liveAllOrders(){
+    document.getElementById('connState').textContent='Connecting…';
+    const tbody = document.querySelector('#allOrdersTable tbody');
+    const qAll = query(collection(db,'orders'), orderBy('createdAt','desc'));
+    onSnapshot(qAll, (snap)=>{
+      document.getElementById('connState').textContent='Live';
+      tbody.innerHTML='';
+      snap.forEach(doc=>{
+        const d = doc.data();
+        tbody.innerHTML += `<tr>
+          <td class="pill">${(d.uid||'-').slice(0,8)}</td>
+          <td>${d.service}</td>
+          <td>₹${d.price}</td>
+          <td><span class="pill">${d.status||'-'}</span></td>
+          <td>${d.createdAt?.toDate ? d.createdAt.toDate().toLocaleString() : '-'}</td>
+        </tr>`;
+      });
+    }, (err)=>{
+      document.getElementById('connState').textContent='Error';
+      alert('Firestore error: '+err.message);
+    });
+  }
+</script>
+
+</body>
+</html>
